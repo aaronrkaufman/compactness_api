@@ -1,0 +1,5 @@
+libgdal-dev
+libudunits2-dev
+libmagick++-dev
+libsodium-dev
+libcurl4-openssl-dev
