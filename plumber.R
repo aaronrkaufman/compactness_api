@@ -30,24 +30,25 @@ function(req){
 }
 
 # So this works -- maybe I need compact to be post, not get?
+# curl -X POST --form 'a=1' https://compactness.herokuapp.com/api/echo
 #* @post /echo
 function(req){
   list(formContents = Rook::Multipart$parse(req))
 }
 
+# curl -X POST --form 'data=D:/Github/compactness_api/ls.shp' https://compactness.herokuapp.com/api/compactness
 #* Get compactness
 #* @param namecol The name of the column indicating district names; default is "district"
 #* @post /compact
 #* @serializer json
-compact = function(req, namecol="district", returnFile = FALSE) {
-  shp = Rook::Multipart$parse(req) # make this a zip, then unzip it in R?
-  unzip(shp)
+function(req, namecol="district", returnFile = FALSE) {
+  shp = Rook::Multipart$parse(req)
   shp2 = read_shapefiles(shp = shp, namecol = namecol)
   feats = generate_features(shp2)
   preds = generate_predictions(feats, namecol = namecol)
   if(returnFile == FALSE){
     list(preds)
   } else {
-    list(preds) # how to use include_file?
+    as_attachment(preds) # https://www.rplumber.io/reference/as_attachment.html
   }
 }
