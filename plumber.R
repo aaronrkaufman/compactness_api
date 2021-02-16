@@ -52,3 +52,8 @@ function(req, namecol="district", returnFile = FALSE) {
     as_attachment(preds) # https://www.rplumber.io/reference/as_attachment.html
   }
 }
+
+
+## to post:
+## curl -X POST --form 'data=@D:/Github/compactness_api/ls.shp' https://compactness.herokuapp.com/api/compact
+## to check logs: https://dashboard.heroku.com/apps/compactness/logs
