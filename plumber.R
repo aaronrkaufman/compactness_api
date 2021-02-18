@@ -36,24 +36,28 @@ function(req){
   list(formContents = Rook::Multipart$parse(req))
 }
 
-# curl -X POST --form 'data=D:/Github/compactness_api/ls.shp' https://compactness.herokuapp.com/api/compactness
 #* Get compactness
-#* @param namecol The name of the column indicating district names; default is "district"
+#* @param namecol
 #* @post /compact
 #* @serializer json
-function(req, namecol="district", returnFile = FALSE) {
-  shp = Rook::Multipart$parse(req)
+function(req, namecol="GEOID", returnFile = FALSE) {
+  tmp = Rook::Multipart$parse(req)
+  shp = tmp$data$filename
+  #namecol = tmp$namecol
+  #print(shp)
+  #print(shp$data$filename)
   shp2 = read_shapefiles(shp = shp, namecol = namecol)
   feats = generate_features(shp2)
   preds = generate_predictions(feats, namecol = namecol)
   if(returnFile == FALSE){
     list(preds)
   } else {
-    as_attachment(preds) # https://www.rplumber.io/reference/as_attachment.html
+    as_attachment(preds, "preds.csv") # https://www.rplumber.io/reference/as_attachment.html
   }
 }
 
 
 ## to post:
-## curl -X POST --form 'data=@D:/Github/compactness_api/ls.shp' https://compactness.herokuapp.com/api/compact
+## curl -X POST --form data=@D:/Github/compactness_api/ls.shp https://compactness.herokuapp.com/api/compact
+## curl -X POST --form data=@D:/Github/compactness_api/ls.shp http://localhost:6831/compact
 ## to check logs: https://dashboard.heroku.com/apps/compactness/logs
