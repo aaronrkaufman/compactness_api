@@ -37,27 +37,27 @@ function(req){
 }
 
 #* Get compactness
-#* @param namecol
 #* @post /compact
 #* @serializer json
-function(req, namecol="GEOID", returnFile = FALSE) {
+function(req, returnFile = FALSE) {
   tmp = Rook::Multipart$parse(req)
   shp = tmp$data$filename
-  #namecol = tmp$namecol
+  namecol = tmp$namecol
   #print(shp)
   #print(shp$data$filename)
   shp2 = read_shapefiles(shp = shp, namecol = namecol)
   feats = generate_features(shp2)
-  preds = generate_predictions(feats, namecol = namecol)
-  if(returnFile == FALSE){
-    list(preds)
-  } else {
-    as_attachment(preds, "preds.csv") # https://www.rplumber.io/reference/as_attachment.html
-  }
+  print(head(feats))
+  preds = generate_predictions(features=feats, namecol = namecol)
+  #if(returnFile == FALSE){
+  #  list(preds)
+  #} else {
+  #  as_attachment(preds, "preds.csv") # https://www.rplumber.io/reference/as_attachment.html
+  #}
 }
 
 
 ## to post:
-## curl -X POST --form data=@D:/Github/compactness_api/ls.shp https://compactness.herokuapp.com/api/compact
-## curl -X POST --form data=@D:/Github/compactness_api/ls.shp http://localhost:6831/compact
+## curl -X POST --form data=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form namecol=GEOID https://compactness.herokuapp.com/api/compact
+## curl -X POST --form data=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form namecol=GEOID http://localhost:6831/compact
 ## to check logs: https://dashboard.heroku.com/apps/compactness/logs
