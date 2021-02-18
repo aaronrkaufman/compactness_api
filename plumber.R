@@ -47,7 +47,6 @@ function(req, returnFile = FALSE) {
   #print(shp$data$filename)
   shp2 = read_shapefiles(shp = shp, namecol = namecol)
   feats = generate_features(shp2)
-  print(head(feats))
   preds = generate_predictions(features=feats, namecol = namecol)
   #if(returnFile == FALSE){
   #  list(preds)
