@@ -39,20 +39,29 @@ function(req){
 #* Get compactness
 #* @post /compact
 #* @serializer json
-function(req, returnFile = FALSE) {
+function(req) {
   tmp = Rook::Multipart$parse(req)
   shp = tmp$data$filename
   namecol = tmp$namecol
+  
+  if(is.null(tmp$returnfile)){
+    returnFile=FALSE
+  } else if(toupper(tmp$returnfile) %in% c("F", "FALSE")){
+    returnFile = FALSE
+  } else{
+    returnFile = TRUE
+  }
+  
   #print(shp)
   #print(shp$data$filename)
   shp2 = read_shapefiles(shp = shp, namecol = namecol)
   feats = generate_features(shp2)
   preds = generate_predictions(features=feats, namecol = namecol)
-  #if(returnFile == FALSE){
-  #  list(preds)
-  #} else {
-  #  as_attachment(preds, "preds.csv") # https://www.rplumber.io/reference/as_attachment.html
-  #}
+  if(returnFile == FALSE){
+    list(preds)
+  } else {
+    as_attachment(preds, "preds.csv") # https://www.rplumber.io/reference/as_attachment.html
+  }
 }
 
 
