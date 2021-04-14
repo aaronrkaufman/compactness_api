@@ -1,2 +1,3 @@
 #!/bin/bash
+apt-get -y clean
 apt-get -y update
