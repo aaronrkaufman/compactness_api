@@ -97,7 +97,7 @@ function(req) {
 
 
 ## to post:
-## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj--form namecol="district" https://compactness.herokuapp.com/api/compact
+## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj --form namecol="GEOID" https://compactness.herokuapp.com/api/compact
 ## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj --form namecol="GEOID" http://localhost:7571/compact
 ## to check logs: https://dashboard.heroku.com/apps/compactness/logs
 
