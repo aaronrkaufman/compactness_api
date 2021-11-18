@@ -49,7 +49,6 @@ function(req){
 function(req) {
   tmp = Rook::Multipart$parse(req)
   #print(str(tmp))
-
   fn = uuid::UUIDgenerate()
   
   shx1 = tmp$shx$tempfile
@@ -58,11 +57,12 @@ function(req) {
   prj1 = tmp$prj$tempfile
   
   ## rename shx1 and shp1
-  shx2 = stringr::str_replace(shx1, "Multipart.*", paste0(fn, ".shx"))
-  shp2 = stringr::str_replace(shp1, "Multipart.*", paste0(fn, ".shp"))
-  dbf2 = stringr::str_replace(dbf1, "Multipart.*", paste0(fn, ".dbf"))
-  prj2 = stringr::str_replace(prj1, "Multipart.*", paste0(fn, ".prj"))
+  shx2 = stringr::str_replace(shx1, "Multipart.*", paste0(fn, "\\tmp.shx"))
+  shp2 = stringr::str_replace(shp1, "Multipart.*", paste0(fn, "\\tmp.shp"))
+  dbf2 = stringr::str_replace(dbf1, "Multipart.*", paste0(fn, "\\tmp.dbf"))
+  prj2 = stringr::str_replace(prj1, "Multipart.*", paste0(fn, "\\tmp.prj"))
   
+  dir.create(fn)
   file.rename(shx1, shx2)
   file.rename(shp1, shp2)
   file.rename(dbf1, dbf2)
