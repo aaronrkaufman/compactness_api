@@ -56,17 +56,24 @@ function(req) {
   dbf1 = tmp$dbf$tempfile
   prj1 = tmp$prj$tempfile
   
-  ## rename shx1 and shp1
-  shx2 = stringr::str_replace(shx1, "Multipart.*", paste0(fn, "\\tmp.shx"))
-  shp2 = stringr::str_replace(shp1, "Multipart.*", paste0(fn, "\\tmp.shp"))
-  dbf2 = stringr::str_replace(dbf1, "Multipart.*", paste0(fn, "\\tmp.dbf"))
-  prj2 = stringr::str_replace(prj1, "Multipart.*", paste0(fn, "\\tmp.prj"))
+  tmpdir = paste0(dirname(shp1), "/", fn)
   
-  dir.create(fn)
-  file.rename(shx1, shx2)
-  file.rename(shp1, shp2)
-  file.rename(dbf1, dbf2)
-  file.rename(prj1, prj2)
+  dir.create(tmpdir)
+  
+  ## rename shx1 and shp1
+  shx2 =paste0(tmpdir, "/tmp.shx")
+  shp2 = paste0(tmpdir, "/tmp.shp")
+  dbf2 =paste0(tmpdir, "/tmp.dbf")
+  prj2 = paste0(tmpdir, "/tmp.prj")
+
+  file.copy(shx1, shx2)
+  file.copy(shp1, shp2)
+  file.copy(dbf1, dbf2)
+  file.copy(prj1, prj2)
+  
+  print(shp1)
+  print(tmpdir)
+  print(shp2)
   
   #shp = tmp$data$tempfile
   namecol = tmp$namecol
@@ -83,7 +90,7 @@ function(req) {
   #print(shp)
   #print(shp$data$filename)
   #namecol = "GEOID"
-  shp3 = read_shapefiles(shp = shp2, namecol = namecol)
+  shp3 = read_shapefiles(shp = tmpdir, namecol = namecol)
   feats = generate_features(shp3)
   idx = apply(feats, 2, FUN=function(x) any(is.na(x)))
   feats = feats[,!idx]
