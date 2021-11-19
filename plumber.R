@@ -75,7 +75,7 @@ function(req) {
   print(tmpdir)
   print(shp2)
   
-  list.files(tmpdir)
+  print(list.files(tmpdir))
   
   #shp = tmp$data$tempfile
   namecol = tmp$namecol
