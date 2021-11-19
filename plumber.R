@@ -77,6 +77,9 @@ function(req) {
   
   print(list.files(tmpdir))
   
+  test = sf::st_read(tmpdir)
+  print("successfully loaded in test")
+  
   #shp = tmp$data$tempfile
   namecol = tmp$namecol
   print(namecol)
