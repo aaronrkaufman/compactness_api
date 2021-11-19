@@ -79,6 +79,7 @@ function(req) {
   
   test = sf::st_read(tmpdir)
   print("successfully loaded in test")
+  print(head(test))
   
   #shp = tmp$data$tempfile
   namecol = tmp$namecol
