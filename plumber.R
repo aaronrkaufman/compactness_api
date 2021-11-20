@@ -114,6 +114,7 @@ function(req) {
   
   idx = apply(feats, 2, FUN=function(x) any(is.na(x)))
   feats = feats[,!idx]
+  print("Cleaning up...")
   
   preds = generate_predictions(features=feats, namecol = namecol)
   
