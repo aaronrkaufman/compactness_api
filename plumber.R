@@ -22,6 +22,13 @@ library(textcat)
 library(uuid)
 library(sf)
 
+get_multi_coord = function(projected, id){
+  l = length(projected@polygons[[id]]@Polygons)
+  coords = lapply(1:l, FUN=function(x) projected@polygons[[id]]@Polygons[[x]]@coords)
+  return(coords)
+}
+
+
 #* Log system time, request method and HTTP user agent of the incoming request
 #* @filter logger
 function(req){
@@ -71,15 +78,11 @@ function(req) {
   file.copy(dbf1, dbf2)
   file.copy(prj1, prj2)
   
-  print(shp1)
-  print(tmpdir)
-  print(shp2)
+  #print(shp1)
+  #print(tmpdir)
+  #print(shp2)
   
-  print(list.files(tmpdir))
-  
-  test = sf::st_read(tmpdir)
-  print("successfully loaded in test")
-  print(head(test))
+  #print(list.files(tmpdir))
   
   #shp = tmp$data$tempfile
   namecol = tmp$namecol
@@ -93,14 +96,27 @@ function(req) {
     returnFile = TRUE
   }
   
-  #print(shp)
-  #print(shp$data$filename)
-  #namecol = "GEOID"
-  shp3 = read_shapefiles(shp = tmpdir, namecol = namecol)
+
+  metadata = sf::st_read(tmpdir)
+  metadata = as.data.frame(metadata)
+  metadata = metadata[,-ncol(metadata)]
+  print("Successfully loaded in data")
+  temp = rgdal::readOGR(tmpdir, verbose=F)
+  proj = sp::proj4string(temp)
+  print("Successfully projected data")
+  projected =  sp::spTransform(temp, sp::CRS("+proj=longlat +datum=WGS84"))
+  coords = lapply(1:length(temp), FUN=function(x) get_multi_coord(projected, x))
+  print("Successfully cleaned up coordinates")
+  shp3 = structure(list(metadata, coords, namecol), class="compactnessShapefile")
+  print("Data is prepared to generate features")
+  #shp3 = read_shapefiles(shp = tmpdir, namecol = namecol)
   feats = generate_features(shp3)
+  
   idx = apply(feats, 2, FUN=function(x) any(is.na(x)))
   feats = feats[,!idx]
+  
   preds = generate_predictions(features=feats, namecol = namecol)
+  
   if(returnFile == FALSE){
     list(preds)
   } else {
@@ -111,7 +127,7 @@ function(req) {
 
 ## to post:
 ## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj --form namecol="GEOID" https://compactness.herokuapp.com/api/compact
-## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj --form namecol="GEOID" http://localhost:7571/compact
+## curl -X POST --form shp=@D:/Github/compactness_api/evenlyspaced20_v2.shp --form shx=@D:/Github/compactness_api/evenlyspaced20_v2.shx --form dbf=@D:/Github/compactness_api/evenlyspaced20_v2.dbf --form prj=@D:/Github/compactness_api/evenlyspaced20_v2.prj --form namecol="GEOID" http://localhost:7893/compact
 ## to check logs: https://dashboard.heroku.com/apps/compactness/logs
 
 
