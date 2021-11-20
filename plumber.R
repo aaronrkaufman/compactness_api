@@ -100,22 +100,17 @@ function(req) {
   metadata = sf::st_read(tmpdir)
   metadata = as.data.frame(metadata)
   metadata = metadata[,-ncol(metadata)]
-  print("Successfully loaded in data")
   temp = rgdal::readOGR(tmpdir, verbose=F)
   proj = sp::proj4string(temp)
-  print("Successfully projected data")
   projected =  sp::spTransform(temp, sp::CRS("+proj=longlat +datum=WGS84"))
   coords = lapply(1:length(temp), FUN=function(x) get_multi_coord(projected, x))
-  print("Successfully cleaned up coordinates")
   shp3 = structure(list(metadata, coords, namecol), class="compactnessShapefile")
-  print("Data is prepared to generate features")
   #shp3 = read_shapefiles(shp = tmpdir, namecol = namecol)
   feats = generate_features(shp3)
   
   idx = apply(feats, 2, FUN=function(x) any(is.na(x)))
   feats = feats[,!idx]
-  print("Cleaning up...")
-  
+
   preds = generate_predictions(features=feats, namecol = namecol)
   
   if(returnFile == FALSE){
